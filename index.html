@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>أدخل كلمة المرور للوصول إلى الدردشة</h2>
+    <input type="password" id="password" placeholder="كلمة المرور">
+    <button onclick="login()">دخول</button>
+
+    <script>
+        function login() {
+            const password = document.getElementById("password").value;
+            const correctPassword = "12345"; // كلمة المرور المطلوبة
+
+            if (password === correctPassword) {
+                window.location.href = "chat.html"; // الانتقال إلى صفحة الدردشة
+            } else {
+                alert("كلمة المرور غير صحيحة");
+            }
+        }
+    </script>
+</body>
+</html>

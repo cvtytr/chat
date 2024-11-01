@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>دردشة عامة</h2>
+    <div id="chatBox" style="border: 1px solid #ddd; height: 300px; overflow-y: scroll;"></div>
+    
+    <input type="text" id="message" placeholder="أدخل رسالتك">
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="sendMessage()">إرسال</button>
+
+    <script>
+        const chatBox = document.getElementById("chatBox");
+        const messageInput = document.getElementById("message");
+        const imageInput = document.getElementById("imageInput");
+
+        // تحميل الرسائل من Local Storage عند فتح الصفحة
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+            chatBox.innerHTML = ''; // إفراغ محتوى صندوق الدردشة
+            messages.forEach(msg => {
+                const messageElement = document.createElement("div");
+                messageElement.innerHTML = msg; // استخدم innerHTML لدعم الصور
+                chatBox.appendChild(messageElement);
+            });
+            chatBox.scrollTop = chatBox.scrollHeight; // التمرير إلى الأسفل
+        }
+
+        function sendMessage() {
+            const message = messageInput.value;
+            const file = imageInput.files[0]; // الحصول على الصورة المرفقة
+
+            if (message || file) {
+                const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+
+                let messageHTML = '';
+                if (message) {
+                    messageHTML += `<div>${message}</div>`;
+                }
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        messageHTML += `<img src="${e.target.result}" style="max-width: 200px;"/>`;
+                        messages.push(messageHTML); // إضافة الرسالة إلى Local Storage
+                        localStorage.setItem("chatMessages", JSON.stringify(messages));
+                        loadMessages(); // إعادة تحميل الرسائل بعد الإرسال
+                    };
+                    reader.readAsDataURL(file); // قراءة الصورة كـ Data URL
+                } else {
+                    messages.push(messageHTML); // إضافة الرسالة النصية إلى Local Storage
+                    localStorage.setItem("chatMessages", JSON.stringify(messages));
+                    loadMessages(); // إعادة تحميل الرسائل بعد الإرسال
+                }
+
+                messageInput.value = ""; // إفراغ حقل الرسالة بعد الإرسال
+                imageInput.value = ""; // إفراغ حقل تحميل الصورة
+            }
+        }
+
+        // تحميل الرسائل عند فتح الصفحة
+        window.onload = loadMessages;
+    </script>
+</body>
+</html>
